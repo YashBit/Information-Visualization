@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Assignment 1</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <h1>Making faces using svg</h1>
+         <!--Hint: you can use <g> tag to group elements as one face-->
+        <svg width='600' height="600">
+            <g>
+                <rect id="up_left" width="300" height="300"></rect>
+                <circle class="face" cx="150" cy="150" r="150"></circle>
+                <circle class="eye" cx="75" cy="100" r="15"></circle>
+                <circle class="eye" cx="225" cy="100" r="15"></circle>
+                <rect class="nose" x="150" y="100" width="2.5" height="40"></rect>
+                <path class="mouth" d="M100,250 C100,100 400,100 400,250"></path>
+            </g>
+            <!-- <g>
+                <circle class="face" cx="110" cy="323" r="150"></circle>
+            </g>
+             -->
+        </svg>
+
+    </body>
+</html>
