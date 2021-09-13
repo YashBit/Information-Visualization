@@ -9,17 +9,38 @@
          <!--Hint: you can use <g> tag to group elements as one face-->
         <svg width='600' height="600">
             <g>
-                <rect id="up_left" width="300" height="300"></rect>
+                <rect id="upleft" width="300" height="300"></rect>
                 <circle class="face" cx="150" cy="150" r="150"></circle>
                 <circle class="eye" cx="75" cy="100" r="15"></circle>
                 <circle class="eye" cx="225" cy="100" r="15"></circle>
                 <rect class="nose" x="150" y="100" width="2.5" height="40"></rect>
-                <path class="mouth" d="M100,250 C100,100 400,100 400,250"></path>
+                <path class="mouth" d="M80,200 Q150,250 220, 200"></path>
             </g>
-            <!-- <g>
-                <circle class="face" cx="110" cy="323" r="150"></circle>
+            <g>
+                <rect id="upright" width="300" height="300" x="300"></rect>
+                <circle class="face" cx="450" cy="150" r="150"></circle>
+                <circle class="eye" cx="380" cy="100" r="15"></circle>
+                <circle class="eye" cx="510" cy="100" r="15"></circle>
+                <rect class="nose" x="445" y="100" width="2.5" height="40"></rect>
+                <path class="mouth" style="stroke-width: 10px;" d="M 363 210 L 521 210 M 365 212 Q442,155 520, 212"></path>
             </g>
-             -->
+            <g>
+                <rect id="lowright" width="300" height="300" x="300" y="300"></rect>
+                <circle class="face" cx="450" cy="450" r="150"></circle>
+                <circle class="eye" cx="380" cy="410" r="15"></circle>
+                <circle class="eye" cx="510" cy="410" r="15"></circle>
+                <rect class="nose" x="445" y="410" width="2.5" height="40"></rect>
+                <path class="mouth" style="stroke-width: 10px;" d="M 363 520 L 521 520 M 363 520 Q442,580 520, 520" ></path>
+            </g>
+            <g>
+                <rect id="lowleft" width="300" height="300" x="0" y="300"></rect>
+                <circle class="face" cx="150" cy="450" r="150"></circle>
+                <circle class="eye" cx="75" cy="410" r="15"></circle>
+                <circle class="eye" cx="225" cy="410" r="15"></circle>
+                <rect class="nose" x="150" y="410" width="2.5" height="40"></rect>
+                <path class="mouth" d="M85 510 L 220 510"></path>
+            </g>
+            
         </svg>
 
     </body>
