@@ -5,11 +5,17 @@ let gap_between_views = 150;
 // Loading the CSV Data
 
 // Todo: Make it only the month of may to display
+let newMargin = {left: 150, right:150, top:150, bottom:150};
 
-let mayPlot = d3.select('svg')
-        .attr("width", width + newMargin.left + newMargin.right)
-        .attr("height", height + newMargin.top + newMargin.bottom)
 
+
+
+const width = 800;
+const height = 900;
+let firstGraph = d3.select('svg').append("g");
+firstGraph.attr('transform', `translate(${newMargin.left}, ${newMargin.top})`)
+
+// Data 
 d3.csv("citi_bike_2020.csv").then(function(data) {
     // Converting to Integer after loading data
     data.forEach(d =>{
@@ -22,59 +28,26 @@ d3.csv("citi_bike_2020.csv").then(function(data) {
         d.tripdurationE = +d.tripdurationE;
         d.month = +d.month;
     });
-
-    // Need Only the Month of May
-
-    let newMargin = {left: 150, right:150, top:150, bottom:150};
-
-    
-    // Setting Scales and Axes for Scatter Plot
-    
-    let xScale = d3.scaleLinear()
-        .range([0, width])
-        .domain([0, d3.max(data, (d) => d.tripdurationS)]);
-    
-    svg.append("g")
-        .attr("transform", "translate(0, " + height + ")")
-        .call(d3.axisBottom(x))
-    svg.append("text")
-        .attr("class", "x label")
-        .attr("text-anchor", "end")
-        .attr("x", width)
-        .attr("y", height)
-        .text("Trip duration start from");
-
-    let yScale = d3.scaleLinear()
-        .range([height, 0])
-        .domain([0, d3.max(data, (d) => d.tripdurationE)]);
-    svg.append("g")
-        .attr("transform", "translate(0, " + height + ")")
-        .call(d3.axisLeft(y))
-    svg.append("text")
-        .attr("class", "x label")
-        .attr("text-anchor", "end")
-        .attr("x", width)
-        .attr("y", height)
-        .text("Trip duration end in");
-    // Axes
-    let xAxis = d3.axisBottom(xScale);
-    let yAxis = d3.axisLeft(yScale)
-        .ticks(5);
-
-    
-    svg.append("g")
-        .attr("class", "axis-label")
-        .attr('transform', 'translate(0,' + (-20) + ')')
-        .append("text")
-        .style("text-anchor", 'middle')
-        .text("Trip duration start from");
-    // Adding the dots from the month of May
-    svg.append('g')
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-            .attr("r", 5)
-            .style("fill", :)
 })
+
+    // Axis and scale
+
+    // X Axis and Scale
+let xScale = d3.scaleLinear()
+        .range([0, width - (newMargin.left + newMargin.right)])
+        .domain([0, d3.max(data, (d) => d.tripdurationS)]);
+let xAxis = d3.axisBottom(xScale)
+
+firstGraph.append('g')
+    .attr("transform", "translate(0, " + (newMargin.right+50) + ")")
+    .attr('class', 'x-axis')
+    .call(xAxis)
+
+    // G does not have width and height
+    
+let secondGraph = d3.select("svg").append("g")
+
+    // Need Only the Month of May    
+    // Setting Scales and Axes for Scatter Plot
+
 
