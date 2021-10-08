@@ -18,6 +18,9 @@ firstGraph.attr('transform', `translate(${newMargin.left}, ${newMargin.top})`)
 // CSV Data Loader and converted. Need to convert it to numerical types 
 d3.csv("citi_bike_2020.csv").then(function(data) {
     // Converting to Integer after loading data
+    mayData = data.filter(function(row) {
+        return row["month"] == "May";
+    });
     data.forEach(d =>{
         d.station = +d.station; 
         d.latitude = +d.latitude;
@@ -29,7 +32,7 @@ d3.csv("citi_bike_2020.csv").then(function(data) {
         d.month = +d.month;
     });
     let xScale = d3.scaleLinear()
-        .range([0, margin.left+margin.up])
+        .range([0, margin.left+100])
         .domain([0, d3.max(data, (d) => d.tripdurationS)]);
     let xAxis = d3.axisBottom(xScale)
         .ticks(10)
@@ -47,11 +50,13 @@ d3.csv("citi_bike_2020.csv").then(function(data) {
         .attr('class', 'y-axis')
         .call(yAxis)
     // May Grouped Data
+    let toolTip = firstGraph.append('g')
+        .attr("class", "tooltip")
 
-
+    
     // Need to filter May Data
     firstGraph.selectAll('.point')
-        .data(data)
+        .data(mayData)
         .enter().append('circle')
         .attr('class', 'point')
         .attr("cx", d=> xScale(d.tripdurationS))
@@ -60,27 +65,51 @@ d3.csv("citi_bike_2020.csv").then(function(data) {
         .style('fill', 'steelblue')
         .style('stroke', 'black')
         .style('stroke-width', 2)
+    
+        
+    
     .on('mouseover', function(d) {
         d3.select(this)
             .transition()
             .duration(500)
             .style("r", '10')
             .style('fill', 'red');
+        tooltip.text(this)
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY)  + "px")
 
+        
     })
+
     .on('mouseout', function(d) {
         d3.select(this)
             .transition()
             .style("r", '5')
             .style('fill', 'steelblue');
+       
     })
 
+
+    // Need to add label too
     
     
 
 })
 
- 
+firstGraph.append("g")
+    .attr("class", "axis-label")
+    .attr("transform", "translate(250,"+ (290) + ")")
+    .append("text")
+    .style("text-anchor", "left")
+    .text("Trip duration start from")
+firstGraph.append("g")
+    .attr("class", "axis-label")
+    .attr("transform", "translate(-100,"+ (130) + ")")
+    .style("text-anchor", "middle")
+
+    .attr("transform", "rotate (-90)")
+    .append("text")
+    .text("Trip duration end in")
 
 // SECOND GRAPH
 
