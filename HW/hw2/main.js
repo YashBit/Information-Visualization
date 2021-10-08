@@ -47,35 +47,40 @@ d3.csv("citi_bike_2020.csv").then(function(data) {
         .attr('class', 'y-axis')
         .call(yAxis)
     // May Grouped Data
-    let mayGroup = d3.map(data, function(d){return d.month == "May"})
-    firstGraph.select('.point')
-        .data(mayGroup)
+
+
+    // Need to filter May Data
+    firstGraph.selectAll('.point')
+        .data(data)
         .enter().append('circle')
         .attr('class', 'point')
         .attr("cx", d=> xScale(d.tripdurationS))
         .attr("cy", d=> yScale(d.tripdurationE))
         .attr("r", '5')
         .style('fill', 'steelblue')
+        .style('stroke', 'black')
+        .style('stroke-width', 2)
+    .on('mouseover', function(d) {
+        d3.select(this)
+            .transition()
+            .duration(500)
+            .style("r", '10')
+            .style('fill', 'red');
+
+    })
+    .on('mouseout', function(d) {
+        d3.select(this)
+            .transition()
+            .style("r", '5')
+            .style('fill', 'steelblue');
+    })
+
+    
+    
 
 })
 
-    // X Axis and Scale
-
-
-// Y Scale
-
-
-
-// Now we add axis labels
-
-// Adding the scatter plots
-
-
-// Interaction
-
-
-
-
+ 
 
 // SECOND GRAPH
 
