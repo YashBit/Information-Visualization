@@ -115,15 +115,19 @@ function display(selectedMonth){
                     .duration(500)
                     .style("r", '10')
                     .style('fill', 'red')  
-                    
+                    //.raise()
                 d3.select(event.target).style("r", 10);
                 // console.log(d3.select(event.target));
                 let cl = d3.select(event.target).attr("class").substring(6);
                 d3.selectAll("."+cl).style("fill", "red")
-                .raise();
+                .raise()
+                .append("rect")
+                .style("fill", "fce703")
+                .style("opacity", 0.4)
+                .attr("transform", "translate(0," + (margin.right+margin.up) + ")")
                 // var sel = d3.select(this);
                 // sel.moveToFront();
-                d3.selectAll(this).raise()
+                //d3.selectAll(this).raise()
                 //.classed("active", true);
             })
            
@@ -267,8 +271,8 @@ function display(selectedMonth){
                 .style('fill', 'red')  
             
             let cl = d3.select(event.target).attr("class").substring(4);
-            d3.selectAll("."+cl).style("fill", "red").style("r", 10);
-                    
+            d3.selectAll("."+cl).style("fill", "red").style("r", 10)
+            .raise();           
         })
         .on('mouseout', (event, d) => {
     
