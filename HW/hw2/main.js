@@ -120,13 +120,15 @@ function display(selectedMonth){
                 // console.log(d3.select(event.target));
                 let cl = d3.select(event.target).attr("class").substring(6);
                 d3.selectAll("."+cl).style("fill", "red")
-                .raise()
-                .append("rect")
-                .style("fill", "fce703")
-                .style("opacity", 0.4)
-                //.attr("transform", "translate(0," + (margin.right+margin.up) + ")")
-                .attr("height", 200)
-                .attr("width", 250);
+                    .raise()
+                d3.select("g")
+                    
+                    .append("rect")
+                    .style("fill", "#fce703")
+                    .style("opacity", 0.4)
+                    //.attr("transform", "translate(0," + (margin.right+margin.up) + ")")
+                    .attr("height", 200)
+                    .attr("width", 250);
 
                 // var sel = d3.select(this);
                 // sel.moveToFront();
