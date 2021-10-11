@@ -40,13 +40,14 @@ slider.on("input", function(){
     display(month[this.value-1]);
    
   });
-function display(selectedMonth){
+function display(selectedMonth = "May"){
    
     d3.csv("citi_bike_2020.csv").then(function(data) {
         // Converting to Integer after loading data
         
-        // selectedMonth = ""
+        //selectedMonth = "May"
         monthData = data.filter(function(row) {
+            
             return row["month"] == selectedMonth;
         });
         // console.log(" Here")
