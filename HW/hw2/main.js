@@ -26,7 +26,11 @@ firstGraph.attr('transform', "translate(" + 80 + "," +80+ ")");
 let secondGraph = d3.select("svg").append("g")
 secondGraph.attr("transform", "translate(" + 80 + "," + (150+height/2)+ ")")
 // CSV Data Loader and converted. Need to convert it to numerical types 
-
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+      this.parentNode.appendChild(this);
+    });
+  };
 slider.on("input", function(){
     console.log(this.value);
     slidertext.attr('value', month[this.value-1]);
@@ -83,7 +87,7 @@ function display(selectedMonth){
         let div = d3.select("body").append("div")
             .attr("class", "tooltip")  
         // Need to filter May Data
-        firstGraph.selectAll('.point')
+        var circles = firstGraph.selectAll('.point')
             .data(monthData)
             // window.alert(54)
             .enter().append('circle')
@@ -108,17 +112,18 @@ function display(selectedMonth){
                     .style("r", '10')
                     .style('fill', 'red')  
                 d3.select(event.target).style("r", 10);
-                console.log(d3.select(event.target));
+                // console.log(d3.select(event.target));
                 let cl = d3.select(event.target).attr("class").substring(6);
                 d3.selectAll("."+cl).style("fill", "red");
-               
+                // var sel = d3.select(this);
+                // sel.moveToFront();
+                d3.selectAll(this).raise().classed("active", true);
             })
            
-            .on("mouseover", function(){
+            // .on("mouseover", function(){
                
-                var sel = d3.select(this);
-                sel.moveToFront();
-            })
+              
+            // })
 
             .on('mouseout', function(d) {
                 div.transition()
@@ -182,14 +187,14 @@ function display(selectedMonth){
 
 
         // Sorting:
-        monthData.sort(function(a,b) {
-            return d3.descending(a.start, b.start);
-        })
+        // monthData.sort(function(a,b) {
+        //     return d3.descending(a.start, b.start);
+        // })
 
 
         let xScale2 = d3.scaleBand()
             .range([0, width])
-            //.domain(data.map((d => d.station)));
+            .domain(data.map((d => d.station)));
         let xAxis2 = d3.axisBottom(xScale2)
             //.ticks(50)
     
@@ -204,9 +209,9 @@ function display(selectedMonth){
         let yAxis2 = d3.axisLeft(yScale2)
             .ticks(5)
 
-        xScale2.domain(monthData.map(function(d) {
-            return d.station
-        }))
+        // xScale2.domain(monthData.map(function(d) {
+        //     return d.station
+        // }))
     
 
         // Attach the X axis
