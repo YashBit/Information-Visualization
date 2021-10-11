@@ -124,7 +124,10 @@ function display(selectedMonth){
                 .append("rect")
                 .style("fill", "fce703")
                 .style("opacity", 0.4)
-                .attr("transform", "translate(0," + (margin.right+margin.up) + ")")
+                //.attr("transform", "translate(0," + (margin.right+margin.up) + ")")
+                .attr("height", 200)
+                .attr("width", 250);
+
                 // var sel = d3.select(this);
                 // sel.moveToFront();
                 //d3.selectAll(this).raise()
