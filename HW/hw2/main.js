@@ -31,6 +31,8 @@ d3.selection.prototype.moveToFront = function() {
       this.parentNode.appendChild(this);
     });
   };
+
+display("May");
 slider.on("input", function(){
     console.log(this.value);
     slidertext.attr('value', month[this.value-1]);
@@ -40,12 +42,13 @@ slider.on("input", function(){
     display(month[this.value-1]);
    
   });
-function display(selectedMonth = "May"){
+function display(selectedMonth){
    
     d3.csv("citi_bike_2020.csv").then(function(data) {
         // Converting to Integer after loading data
         
         //selectedMonth = "May"
+     
         monthData = data.filter(function(row) {
             
             return row["month"] == selectedMonth;
@@ -112,13 +115,16 @@ function display(selectedMonth = "May"){
                     .duration(500)
                     .style("r", '10')
                     .style('fill', 'red')  
+                    
                 d3.select(event.target).style("r", 10);
                 // console.log(d3.select(event.target));
                 let cl = d3.select(event.target).attr("class").substring(6);
-                d3.selectAll("."+cl).style("fill", "red");
+                d3.selectAll("."+cl).style("fill", "red")
+                .raise();
                 // var sel = d3.select(this);
                 // sel.moveToFront();
-                d3.selectAll(this).raise().classed("active", true);
+                d3.selectAll(this).raise()
+                //.classed("active", true);
             })
            
             // .on("mouseover", function(){
