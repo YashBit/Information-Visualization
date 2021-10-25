@@ -19,6 +19,8 @@
         <script type='text/babel'>
             const margin = { top: 20, right: 20, bottom: 180, left: 40, gap: 50 };
             const csvUrl = 'https://gist.githubusercontent.com/hogwild/3b9aa737bde61dcb4dfa60cde8046e04/raw/citibike2020.csv'
+            const WIDTH = 600;
+            const HEIGHT = 800;
             function useData(csvPath){
                 const [dataAll, setData] = React.useState(null);
                 React.useEffect(() => {
@@ -41,57 +43,58 @@
              * the Y Axis for the scatter plot or the Y Axis for the bar chart,
              * depending on the its props.
              */
-            function YAxes(props) {
-                const {yScale, height} = props;
-                const ticks = yScale.ticks();
-                return <g>
-                    <line y2 = {height} stroke = {`black`} />
-                    {ticks.map( tickValue => {
-                        return <g key = {tickValue} transform = {`translate(-10, ${yScale(tickValue)})`}>
-                                <line x2 = {10} stroke = {"black"} />
-                                <text style = {{textAnchor: 'end', fontSize: '18px'}}>
-                                {tickValue}
-                                </text>
-                                </g> })}
+            // function YAxes(props) {
+            //     const {yScale, height} = props;
+            //     const ticks = yScale.ticks();
+            //     return <g>
+            //         <line y2 = {height} stroke = {`black`} />
+            //         {ticks.map( tickValue => {
+            //             return <g key = {tickValue} transform = {`translate(-10, ${yScale(tickValue)})`}>
+            //                     <line x2 = {10} stroke = {"black"} />
+            //                     <text style = {{textAnchor: 'end', fontSize: '18px'}}>
+            //                     {tickValue}
+            //                     </text>
+            //                     </g> })}
 
                     
 
-                </g>
-            }
+            //     </g>
+            // }
                
             
 
-            /**
-             * Note: 
-             * After you finish task 2, this components should return either 
-             * the X Axis for the scatter plot or the X Axis for the bar chart,
-             * depending on the its props.
-             */
-            function XAxes(props) {
-                const {xScale, width, height} = props;
-                const ticks = xScale.ticks();
-                return <g>
-                    <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
-                    {ticks.map( tickValue => {
-                        return <g key = {tickValue} transform = {`translate(${xScale(tickValue)}, ${height})`}>
+            // /**
+            //  * Note: 
+            //  * After you finish task 2, this components should return either 
+            //  * the X Axis for the scatter plot or the X Axis for the bar chart,
+            //  * depending on the its props.
+            //  */
+            // function XAxes(props) {
+            //     const {xScale, width, height} = props;
+            //     const ticks = xScale.ticks();
+            //     return <g>
+            //         <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
+            //         {ticks.map( tickValue => {
+            //             return <g key = {tickValue} transform = {`translate(${xScale(tickValue)}, ${height})`}>
 
-                                <line y2 = {5} stroke = {"black"} />
-                                <text style = {{textAnchor: 'middle', fontSize: '18px'}} y ={20}>
-                                {tickValue}
-                                </text>
-                                </g> })}
+            //                     <line y2 = {5} stroke = {"black"} />
+            //                     <text style = {{textAnchor: 'middle', fontSize: '18px'}} y ={20}>
+            //                     {tickValue}
+            //                     </text>
+            //                     </g> })}
 
                     
 
-                </g>
+            //     </g>
                 
-            }
+            // }
 
             function Points(props) {
                 // console.log(data)
                 const {data, xScale, yScale, radius, color} = props;
                 return <g> 
                     {data.map(d => {
+                        //console.log(xScale(d.tripdurationS, 95));
                         return <circle key = {d.station} cx={xScale(d.tripdurationS)}
                         cy = {yScale(d.tripdurationE)} r = {radius} fill = {color} stroke = {`black`} fill={"steelblue"} />
 
@@ -110,11 +113,11 @@
                 // };
                 //console.log(props, 111);
                 const data = props.data;
-                const height = height - margin.top - margin.bottom;
-                const width = width - margin.left - margin.right;
+                const height = HEIGHT - margin.top - margin.bottom;
+                const width = WIDTH - margin.left - margin.right;
                 const xScale = d3.scaleLinear().range([0, width])
                     .domain([0, d3.max(data, d=> d.tripdurationS)]).nice();
-                    const yScale = d3.scaleLinear().range([height, 0])
+                const yScale = d3.scaleLinear().range([height, 0])
                     .domain([0, d3.max(data, d=> d.tripdurationE)]).nice();
                 return <g transform = {`translate(${margin.left}, ${margin.top})`}>
                     <Points data = {data} xScale = {xScale} yScale = {yScale} radius = {5} color = {"steelblue"}/>
@@ -137,13 +140,12 @@
 
             const Charts = () => {
                 const dataAll = useData(csvUrl);
-                console.log(dataAll, 135);
+                //console.log(dataAll, 135);
                 if (!dataAll) {
                    return <pre>Loading...</pre>;
                 };
-                console.log(dataAll, 138);
-                const WIDTH = 600;
-                const HEIGHT = 800;
+                //console.log(dataAll, 138);
+               
                 const innerHeight = HEIGHT - margin.top - margin.bottom;
                 const innerWidth = WIDTH - margin.left - margin.right; 
                 const data = dataAll.filter( d => { 
