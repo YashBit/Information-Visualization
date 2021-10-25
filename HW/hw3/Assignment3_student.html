@@ -103,7 +103,13 @@
             }
 
             function ScatterPlot(props) {
-                const data = useData(csvUrl);
+                // const data = useData(csvUrl);
+                // console.log(data);
+                // if (!data) {
+                //    return <pre>Loading...</pre>;
+                // };
+                //console.log(props, 111);
+                const data = props.data;
                 const height = height - margin.top - margin.bottom;
                 const width = width - margin.left - margin.right;
                 const xScale = d3.scaleLinear().range([0, width])
@@ -131,9 +137,11 @@
 
             const Charts = () => {
                 const dataAll = useData(csvUrl);
+                console.log(dataAll, 135);
                 if (!dataAll) {
                    return <pre>Loading...</pre>;
                 };
+                console.log(dataAll, 138);
                 const WIDTH = 600;
                 const HEIGHT = 800;
                 const innerHeight = HEIGHT - margin.top - margin.bottom;
@@ -149,7 +157,7 @@
                             <input key="monthText" type="text" value={"May"} readOnly/>
                         </div>
                         <svg width={WIDTH} height={HEIGHT}>
-                            <ScatterPlot />
+                            <ScatterPlot data = {data}/>
                             <BarChart />
                         </svg>
                     </div>
