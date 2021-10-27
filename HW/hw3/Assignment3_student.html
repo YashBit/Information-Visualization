@@ -153,7 +153,7 @@
                         //console.log(yScale(d.start), 142);
                         
                         return <rect key = {d.station} x={xScale(d.station)} 
-                        y = {HEIGHT/2 - yScale(d.start)-margin.bottom+80} fill = {color} stroke = {`black`} fill={"steelblue"} height = {yScale(d.start)} width = {xScale.bandwidth()}/>
+                        y = {yScale(d.start) + 50} fill = {color} stroke = {`black`} fill={"steelblue"} height = {yScale(d.start)} width = {xScale.bandwidth()}/>
                         
 
                     })}
