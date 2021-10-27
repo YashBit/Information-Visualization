@@ -97,6 +97,16 @@
             function Points(props) {
                 // console.log(data)
                 const {data, xScale, yScale, radius, color} = props;
+                // const [selectedPoint, setSelectedPoint] = React.useState(null);
+                // const mouseOver = d => {
+                //     setSelectedPoint(d.index);
+                // };
+                // const mouseOut = () => {
+                //     setSelectedPoint(null);
+                // };
+                // const color = d => d.index === selectedPoint? "red":"steelblue";
+                // const radius = d => d.index === selectedPoint? 10:5;
+                
                 return <g> 
                     {data.map(d => {
                         //console.log(xScale(d.tripdurationS, 95));
@@ -137,14 +147,17 @@
 
             function Bars(props) {
                 const {data, xScale, yScale, color, height} = props;
+                console.log(data, 153);
                 return <g> 
                     {data.map(d => {
                         //console.log(yScale(d.start), 142);
+                        
                         return <rect key = {d.station} x={xScale(d.station)} 
-                        y = {yScale(d.start)-50} fill = {color} stroke = {`black`} fill={"steelblue"} height = {yScale(d.start) + 50} width = {xScale.bandwidth()}/>
+                        y = {HEIGHT/2 - yScale(d.start)-margin.bottom+80} fill = {color} stroke = {`black`} fill={"steelblue"} height = {yScale(d.start)} width = {xScale.bandwidth()}/>
                         
 
                     })}
+                    
 
                 </g>
                 
@@ -162,6 +175,8 @@
                 return <g transform = {`translate(${margin.left}, ${margin.top+450})`}>
                     <YAxes yScale = {yScale2} width = {width} height = {height}/>
                     <text transform = "rotate(-90)" class ="small"  x="-150" y ="20"> Bikers Start From</text>
+                    
+                    
                     <Bars height = {height} data = {data} xScale = {xScale} yScale = {yScale2} color = {"steelblue"}/>
                     
                     </g>
@@ -182,7 +197,7 @@
                 const innerHeight = HEIGHT - margin.top - margin.bottom;
                 const innerWidth = WIDTH - margin.left - margin.right; 
                 const data = dataAll.filter( d => { 
-                    return d.month === "May"; 
+                    return d.month === "Feb"; 
                 });
                 return (
                     <div>
