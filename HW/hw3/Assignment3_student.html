@@ -72,46 +72,69 @@
              * depending on the its props.
              */
             function XAxes(props) {
-                const {xScale, width, height, typeChart} = props;
+                const {xScale, width, height, typeChart, data} = props;
                // console.log(props, 75)
                 const ticks = xScale.ticks();
-                return <g>
-                    
-                    <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
-                    {ticks.map( tickValue => {
-                    return <g key = {tickValue} transform = {`translate(${xScale(tickValue)}, ${height})`}>
+                if (typeChart === "ScatterPlot"){
+                    return <g>
+                        
+                        <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
+                        {ticks.map( tickValue => {
+                        return <g key = {tickValue} transform = {`translate(${xScale(tickValue)}, ${height})`}>
 
-                            <line y2 = {5} stroke = {"black"} />
-                            <text style = {{textAnchor: 'middle', fontSize: '18px'}} y ={20}>
-                            {tickValue}
-                            </text>
-                            </g> })}
-                    
+                                <line y2 = {5} stroke = {"black"} />
+                                <text style = {{textAnchor: 'middle', fontSize: '18px'}} y ={20}>
+                                {tickValue}
+                                </text>
+                                </g> })}
+                        
 
-                    
+                        
 
-                </g>
+                    </g>
+                }
+                else{
+                    return <g>
+                        
+                        <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
+                        {data.map( d => {
+                        return <g key = {d.station} transform = {`translate(${xScale(d.station)}, ${height})`}>
+                                <line y2 = {5} stroke = {"black"} />
+                                <text style = {{textAnchor: 'middle', fontSize: '18px'}} y ={20}>
+                                {d}
+                                </text>
+                                </g> })}
+                        
+
+                        
+
+                    </g>
+                }
+
                 
             }
 
             function Points(props) {
                 // console.log(data)
-                const {data, xScale, yScale, radius, color} = props;
-                // const [selectedPoint, setSelectedPoint] = React.useState(null);
-                // const mouseOver = d => {
-                //     setSelectedPoint(d.index);
-                // };
-                // const mouseOut = () => {
-                //     setSelectedPoint(null);
-                // };
-                // const color = d => d.index === selectedPoint? "red":"steelblue";
-                // const radius = d => d.index === selectedPoint? 10:5;
-                
+                const {data, xScale, yScale} = props;
+                const [selectedPoint, setSelectedPoint] = React.useState(null);
+                const mouseOver = d => {
+                    setSelectedPoint(d.station);
+                };
+                const mouseOut = () => {
+                    setSelectedPoint(null);
+                };
+                const color = d => d.station === selectedPoint? "red":"steelblue";
+                const radius = d => d.station === selectedPoint? 10:5;
+                // return <circle key = {d.station} cx={xScale(d.tripdurationS)}
+                //         cy = {yScale(d.tripdurationE)} r = {radius} fill = {color} stroke = {`black`} fill={"steelblue"} />
+
                 return <g> 
                     {data.map(d => {
                         //console.log(xScale(d.tripdurationS, 95));
                         return <circle key = {d.station} cx={xScale(d.tripdurationS)}
-                        cy = {yScale(d.tripdurationE)} r = {radius} fill = {color} stroke = {`black`} fill={"steelblue"} />
+                        cy = {yScale(d.tripdurationE)} r = {radius(d)} fill = {color(d)} stroke = {`black`} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
+
 
 
                     })}
@@ -136,7 +159,7 @@
                 const yScale = d3.scaleLinear().range([height, 0])
                     .domain([0, d3.max(dataAll, d=> d.tripdurationE)]).nice();
                 return <g transform = {`translate(${margin.left}, ${margin.top})`}>
-                    <Points data = {data} xScale = {xScale} yScale = {yScale} radius = {5} color = {"steelblue"}/>
+                    <Points data = {data} xScale = {xScale} yScale = {yScale}/>
                     <XAxes xScale = {xScale} width = {width} height = {height} typeChart={"ScatterPlot"}/>
                     <text class ="small"  x="350" y ="290"> Trip Duration Start From</text>
                     <YAxes yScale = {yScale} width = {width} height = {height}/>
@@ -153,7 +176,7 @@
                         //console.log(yScale(d.start), 142);
                         
                         return <rect key = {d.station} x={xScale(d.station)} 
-                        y = {yScale(d.start) + 50} fill = {color} stroke = {`black`} fill={"steelblue"} height = {yScale(d.start)} width = {xScale.bandwidth()}/>
+                        y = {yScale(d.start) -100 } fill = {color} stroke = {`black`} fill={"steelblue"} height = {HEIGHT/2 - yScale(d.start)} width = {xScale.bandwidth()}/>
                         
 
                     })}
@@ -178,7 +201,7 @@
                     
                     
                     <Bars height = {height} data = {data} xScale = {xScale} yScale = {yScale2} color = {"steelblue"}/>
-                    
+
                     </g>
             }
 
@@ -197,7 +220,7 @@
                 const innerHeight = HEIGHT - margin.top - margin.bottom;
                 const innerWidth = WIDTH - margin.left - margin.right; 
                 const data = dataAll.filter( d => { 
-                    return d.month === "Feb"; 
+                    return d.month === "May"; 
                 });
                 return (
                     <div>
