@@ -75,8 +75,10 @@
             function XAxes(props) {
                 const {xScale, width, height, typeChart, data} = props;
                // console.log(props, 75)
-                const ticks = xScale.ticks();
+               console.log(typeChart, 78);
                 if (typeChart === "ScatterPlot"){
+                    const ticks = xScale.ticks();
+
                     return <g>
                         
                         <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
@@ -95,13 +97,14 @@
                     </g>
                 }
                 else if(typeChart === "BarChart"){
+                    // console.log(typeChart, 99);
                     return <g>
                         
-                        <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
+                        <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`red`} />
                         {data.map( d => {
-                        return <g key = {d.station} transform = {`translate(${xScale(d.station)}, ${height})`}>
-                                <line y2 = {5} stroke = {"black"} />
-                                <text style = {{textAnchor: 'middle', fontSize: '18px'}} y ={20}>
+                        return <g key = {d.station} transform = {`translate(${xScale(d.station)}, ${-10})`}>
+                                <line y2 = {2} stroke = {"black"} />
+                                <text transform = "rotate(75)" style = {{textAnchor: 'start', fontSize: '9px'}} x = {2} y ={0}>
                                 {d.station}
                                 </text>
                                 </g> })}
@@ -210,7 +213,7 @@
                         {data.map(d => {
                             //console.log(xScale(d.tripdurationS, 95));
                             return <rect key = {d.station} x={xScale(d.station)} 
-                        y = {yScale(d.start)} fill = {"steelblue"} stroke = {`black`}  height = {HEIGHT/2 - yScale(d.start)} width = {xScale.bandwidth()}/>
+                            y = {yScale(d.start)} fill = {"steelblue"} stroke = {`black`}  height = {HEIGHT/2 - yScale(d.start)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
                         
 
 
@@ -222,14 +225,14 @@
                         {data.map(d => {
                             //console.log(xScale(d.tripdurationS, 95));
                             return <rect key = {d.station} x={xScale(d.station)} 
-                        y = {yScale(d.start)} fill = {color(d)} stroke = {`black`}  height = {HEIGHT/2 - yScale(d.start)} width = {xScale.bandwidth()}/>
+                        y = {yScale(d.start)} fill = {color(d)} stroke = {`black`}  height = {HEIGHT/2 - yScale(d.start)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
                         
 
 
                         })}
                         {data.filter(d=> d.station ===selectedPoint).map( d=> {
                             return <rect key = {d.station} x={xScale(d.station)} 
-                        y = {yScale(d.start)} fill = {color(d)} stroke = {`black`}  height = {HEIGHT/2 - yScale(d.start)} width = {xScale.bandwidth()}/>
+                        y = {yScale(d.start)} fill = {color(d)} stroke = {`black`}  height = {HEIGHT/2 - yScale(d.start)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
                         
 
                         })}
@@ -246,6 +249,8 @@
                 const setSelectedPoint = props.setSelectedPoint;
                 const selectedPoint = props.selectedPoint;
                 const height = (HEIGHT - margin.top - margin.bottom)/2;
+               // <XAxes xScale = {xScale} width = {width} height = {height}/>
+
                 const width = WIDTH - margin.left - margin.right;
                 const xScale = d3.scaleBand().range([0, width])
                     .domain(dataAll.map((d=>d.station)));
@@ -255,7 +260,7 @@
                     <YAxes yScale = {yScale2} width = {width} height = {height}/>
                     <text transform = "rotate(-90)" class ="small"  x="-150" y ="20"> Bikers Start From</text>
                     
-                    
+                    <XAxes data= {data} xScale = {xScale} width = {width} height = {height} typeChart={"BarChart"}/>
                     <Bars selectedPoint ={selectedPoint} setSelectedPoint ={setSelectedPoint} height = {height} data = {data} xScale = {xScale} yScale = {yScale2}/>
 
                     </g>
@@ -281,16 +286,26 @@
                 const innerWidth = WIDTH - margin.left - margin.right; 
 
                 // Need to define a hook here in charts
-                // 
-               
+                // // 
+                // function changeMonth(month){
+                //     tsetSelectedMonth(d.month === month);
+                // }
+
+                // function changeMonth(event) {
+                //     setSelectedMonth(event.value);
+                // }
+                const changeHandler = (event) => {
+                    setSelectedMonth(event.target.value);
+                };
+                
                 const data = dataAll.filter( d => { 
-                    return d.month === "May"; 
+                    return d.month === "Oct"; 
                 });
                 return (
                     <div>
                         <div>
                             <input key="slider" type='range' min='0' max='11' value={4} step='1' 
-                            onChange={()=>{console.log("In Task 5, you need to define a handler.")}}/>
+                            onChange={() => changeHandler(month[event.value-1])}/>
                             <input key="monthText" type="text" value={"May"} readOnly/>
                         </div>
                         <svg width={WIDTH} height={HEIGHT}>
