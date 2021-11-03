@@ -10,6 +10,23 @@
         <script crossingin src="https://unpkg.com/react/umd/react.development.js"></script>
         <script crossingin src="https://unpkg.com/react-dom/umd/react-dom.development.js"></script>
         <script crossingin src="https://unpkg.com/babel-standalone/babel.js"></script>
+        <style>
+            div.tooltip{
+                position: absolute;
+                text-align: center;
+                width: 60px;
+                height: 35px;
+                font: 12px sans-serif;
+                background-color: rgb(60, 185, 119);
+                border: 0px;
+                border-radius: 8px;
+                pointer-events: none;
+            }
+
+
+
+
+        </style>
     </head>
         
     <body>
@@ -123,7 +140,7 @@
             function Points(props) {
                 // console.log(data)
 
-                const {data, xScale, yScale, width, height, setSelectedPoint, selectedPoint} = props;
+                const {dataAll, data, setLeft, setTop, setSelectLeft, setSelectTop, setSelectLeftdata, xScale, yScale, width, height, setSelectedPoint, selectedPoint} = props;
                 const mouseOver = d => {
                     setSelectedPoint(d.station);
                 };
@@ -157,6 +174,7 @@
 
 
                         })}
+
                         <rect x = {0} y = {0} width={width} height = {height} fill = {"yellow"} opacity={0.6}/>
                         {data.filter(d=> d.station ===selectedPoint).map( d=> {
                             return <circle key = {d.station} cx={xScale(d.tripdurationS)}
@@ -164,9 +182,11 @@
 
 
                         })}
-                    
+                        
 
-                    </g>}}
+                    </g>
+                    
+                }}
                 
           
                 
@@ -178,6 +198,7 @@
                 //    return <pre>Loading...</pre>;
                 // };
                 //console.log(props, 111);
+                const {setLeft, setTop, setSelectLeft, setSelectTop} = props;
                 const data = props.data;
                 const dataAll = props.dataAll;
                 const setSelectedPoint = props.setSelectedPoint;
@@ -189,7 +210,7 @@
                 const yScale = d3.scaleLinear().range([height, 0])
                     .domain([0, d3.max(dataAll, d=> d.tripdurationE)]).nice();
                 return <g transform = {`translate(${margin.left}, ${margin.top})`}>
-                    <Points selectedPoint = {selectedPoint} setSelectedPoint = {setSelectedPoint} data = {data} xScale = {xScale} yScale = {yScale} width={width} height = {height}/>
+                    <Points setSelectLeft = {setSelectLeft} setSelectTop = {setSelectTop} setLeft = {setLeft} setTop = {setTop} selectedPoint = {selectedPoint} setSelectedPoint = {setSelectedPoint} data = {data} xScale = {xScale} yScale = {yScale} width={width} height = {height}/>
                     <XAxes xScale = {xScale} width = {width} height = {height} typeChart={"ScatterPlot"}/>
                     <text class ="small"  x="350" y ="290"> Trip Duration Start From</text>
                     <YAxes yScale = {yScale} width = {width} height = {height}/>
@@ -210,6 +231,7 @@
                 const color = d => d.station === selectedPoint? "red":"steelblue";
                 if (selectedPoint === null){
                     return <g> 
+                        
                         {data.map(d => {
                             //console.log(xScale(d.tripdurationS, 95));
                             return <rect key = {d.station} x={xScale(d.station)} 
@@ -267,12 +289,75 @@
             }
 
             function Tooltip(props) {
+
+                // Two hooks in chart 
+                // Left and Top
+
+                // div style (left, top)
+                const mystyle = {
+                    
+                    // text-align: center,
+                    width: "60px",
+                    height: "35px",
+                    fontFamily: "Arial", 
+                    backgroundColor: "green",
+                    // border: "0px",
+//                    border-radius: 8px,
+  //                  pointer-events: none,
+                };
+                // return a div div pair
+
+                // style {myStyle}
+                const {event, selectedPoint, setSelectedPoint, data, setLeft, setTop, setSelectLeft, setSelectTop} = props;
+                
+                // mouseover, 
+                // Filter by station, filter by month: 
+                // console.log(setTop, 314);
+                // console.log(setLeft, 315);
+
+                console.log(data, 318);
+
+                console.log(event, 320);
+                const currentData = data.filter( d => { 
+                    return d.station === selectedPoint; 
+                });
+                console.log(currentData, 324);
+                console.log(currentData.length, 325);
+                let stationData = currentData[0];
+                const name = "Hello";
+                if (selectedPoint === null){
+                    return <div> </div> 
+                }else{
+                    
+                    return <div  style={{opacity: "0.9", position: "fixed" , background: "rgb(60, 185, 119)" , height: "100px", width: "120px", top:event.pageY+2.5, left:event.pageX}}>
+                    
+                    <h1 style={{fontSize: "12px", fontStyle: "Arial"}}>{stationData.station}</h1>
+                    <h1 style={{fontSize: "12px", fontStyle: "Arial"}}>Trip Durations</h1>
+
+                    <ul style={{fontSize: "12px", fontStyle: "Arial"}}>
+                        <li> End in: {stationData.start} </li>
+                        <li> Start from: {stationData.end}</li>
+                    </ul>
+                    </div>
+                    
+                }
+             }
+                // // add the information as html tags
+              
+                
+
+
                
-            }
+            
 
             const Charts = () => {
                 const [selectedPoint, setSelectedPoint] = React.useState(null);
-                const [selectedMonth, setSelectedMonth] = React.useState(null);
+                const [selectedMonth, setSelectedMonth] = React.useState("May");
+                
+                
+                const [setLeft, setSelectLeft] = React.useState(null);
+                const [setTop, setSelectTop] = React.useState(null);
+
                 let month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
                 const dataAll = useData(csvUrl);
@@ -294,23 +379,40 @@
                 // function changeMonth(event) {
                 //     setSelectedMonth(event.value);
                 // }
+                // const data = dataAll.filter( d => { 
+                //     return d.month === "May"; 
+                // });
+                //selectedMonth === "May";
+                //setSelectedMonth("May");
                 const changeHandler = (event) => {
-                    setSelectedMonth(event.target.value);
+                    // console.log(event.target.value, 298);
+                    //console.log(month[event.target.value -1], 299);
+                    setSelectedMonth(month[event.target.value]);
                 };
-                
+                //console.log(selectedMonth, 302)
                 const data = dataAll.filter( d => { 
-                    return d.month === "Oct"; 
+                    return d.month === selectedMonth; 
                 });
+               // <Tooltip setSelectLeft = {setSelectLeft} setSelectTop = {setSelectTop} dataAll = {dataAll} data = {data} setLeft = {setLeft} setTop = {setTop} selectedPoint ={selectedPoint} setSelectedPoint ={setSelectedPoint} />
+
+
+                // Call the tooltip function inside the div
                 return (
                     <div>
                         <div>
-                            <input key="slider" type='range' min='0' max='11' value={4} step='1' 
-                            onChange={() => changeHandler(month[event.value-1])}/>
-                            <input key="monthText" type="text" value={"May"} readOnly/>
+                            <input key="slider" type='range' min='0' max='11' value={month.indexOf(selectedMonth)} step='1' 
+                            onChange={() => changeHandler(event)}/>
+                            <input key="monthText" type="text" value={selectedMonth} readOnly/>
                         </div>
+                        <div>
+                            <Tooltip event = {event} setSelectLeft = {setSelectLeft} setSelectTop = {setSelectTop} dataAll = {dataAll} data = {data} setLeft = {setLeft} setTop = {setTop} selectedPoint ={selectedPoint} setSelectedPoint ={setSelectedPoint} />
+
+                        </div>
+                        
                         <svg width={WIDTH} height={HEIGHT}>
-                            <ScatterPlot dataAll = {dataAll} data = {data} selectedPoint ={selectedPoint} setSelectedPoint ={setSelectedPoint}/>
+                            <ScatterPlot setSelectLeft = {setSelectLeft} setSelectTop = {setSelectTop} setLeft = {setLeft} setTop = {setTop} dataAll = {dataAll} data = {data} selectedPoint ={selectedPoint} setSelectedPoint ={setSelectedPoint}/>
                             <BarChart dataAll = {dataAll} data = {data} selectedPoint ={selectedPoint} setSelectedPoint ={setSelectedPoint}/>
+
                         </svg>
                     </div>
                 )   
