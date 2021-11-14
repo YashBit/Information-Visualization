@@ -1,0 +1,14 @@
+  // {map.features.map(feature => {
+            //     //console.log(feature.properties.name, 72);
+            //     const country = data.filter(d=> d.popularity === feature.properties.name);
+            //     if (country[0]){
+            //         return <path key = {feature.properties.name + "boundary"} className={"boundary"}
+            //         d ={path(feature)}
+            //         style={{fill: color(incomeLevels.indexOf(country[0].popularity))}} />}
+            //         else{
+            //             return <path key={feature.properties.name + "boundary"} className={"boundary"}
+            //             d={path(feature)}/>
+
+            //         }
+                
+            //     })}
