@@ -70,7 +70,7 @@
 
         // Size of the station == popularity
 
-        // const color = d => d.station === selectedStation? "red":"steelblue";
+        const color = d => d.station === selectedStation? "steelblue":"red";
         // const radius = d => d.station === selectedStation? 10:5;
         console.log(map, 53);
         // 1. min 2, max 20
@@ -89,11 +89,12 @@
                     d={path(feature)}/>
                 
                 })}
+                
                 {data.map(d => {
                             //console.log(xScale(d.tripdurationS, 95));
                     const [x, y] = projection([d.longitude, d.latitude]);
                     return <circle key = {"station" + d.longitude + d.latitude}
-                    cx={x} cy={y} r={radius(d.popularity)} stroke = {`black`} opacity={0.7} fill={"red"} /> 
+                    cx={x} cy={y} r={radius(d.popularity)} fill = {color(d)} stroke = {`black`} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut} opacity={0.7}  /> 
                 
 
 
