@@ -51,7 +51,14 @@
         const projection = d3.geoMercator()
             .scale(50)
             .fitSize([width, height], map);
+        
+        const radius = d3.scaleLinear().range([2, 20])
+            .domain([d3.min(data, d=>d.popularity), d3.max(data, d=>d.popularity)]);
+        
+        
         const path = d3.geoPath(projection);
+        
+        
         const mouseOver = d => {
             setSelectedStation(d.station);
         };
@@ -63,25 +70,35 @@
 
         // Size of the station == popularity
 
-        const color = d => d.station === selectedStation? "red":"steelblue";
-        const radius = d => d.station === selectedStation? 10:5;
-        //console.log(map, 53);
-        return <g transform={`translate(${x}, ${y})`}>
-            <path className={'sphere'} d={path({type: 'Sphere'})} />
-            {map.features.map(feature => {
-                //console.log(feature.properties.name, 72);
-                const country = data.filter(d=> d.popularity === feature.properties.name);
-                if (country[0]){
-                    return <path key = {feature.properties.name + "boundary"} className={"boundary"}
-                    d ={path(feature)}
-                    style={{fill: color(incomeLevels.indexOf(country[0].popularity))}} />}
-                    else{
-                        return <path key={feature.properties.name + "boundary"} className={"boundary"}
-                        d={path(feature)}/>
+        // const color = d => d.station === selectedStation? "red":"steelblue";
+        // const radius = d => d.station === selectedStation? 10:5;
+        console.log(map, 53);
+        // 1. min 2, max 20
+        // 2. On hover turn blue
 
-                    }
+
+        return <g transform={`translate(${x}, ${y})`}>
+            <path className={'land'} d={path({type: 'land'})} />
+            {map.features.map(feature => {
+                //console.log(feature.properties.name, 72);       
+                // get the color of circles in red
+                
+                const stations = data.filter(d => d.latitude === feature.properties.geo_point_2d[0] && d.longitude === feature.properties.geo_point_2d[1]);
+                console.log(stations, 79);         
+                return <path key={feature.properties.name + "boundary"} className={"boundary"}
+                    d={path(feature)}/>
                 
                 })}
+                {data.map(d => {
+                            //console.log(xScale(d.tripdurationS, 95));
+                    const [x, y] = projection([d.longitude, d.latitude]);
+                    return <circle key = {"station" + d.longitude + d.latitude}
+                    cx={x} cy={y} r={radius(d.popularity)} stroke = {`black`} opacity={0.7} fill={"red"} /> 
+                
+
+
+                })}
+                    
             </g>
     }
     
