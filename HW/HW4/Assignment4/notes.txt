@@ -12,3 +12,12 @@
             //         }
                 
             //     })}
+
+
+
+
+ {data.map( d => {
+            return <g key = {d.station} transform = {`translate(${xScale(d.station)}, ${-10})`}>
+
+                    </g> })}
+            <XAxes data= {data} xScale = {xScale} width = {width} height = {height} typeChart={"BarChart"}/>

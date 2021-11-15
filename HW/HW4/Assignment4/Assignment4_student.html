@@ -66,13 +66,13 @@
             setSelectedStation(null);
         };
 
-        console.log(data, 62);
+        //console.log(data, 62);
 
         // Size of the station == popularity
 
         const color = d => d.station === selectedStation? "steelblue":"red";
         // const radius = d => d.station === selectedStation? 10:5;
-        console.log(map, 53);
+        //console.log(map, 53);
         // 1. min 2, max 20
         // 2. On hover turn blue
 
@@ -84,7 +84,7 @@
                 // get the color of circles in red
                 
                 const stations = data.filter(d => d.latitude === feature.properties.geo_point_2d[0] && d.longitude === feature.properties.geo_point_2d[1]);
-                console.log(stations, 79);         
+                //console.log(stations, 79);         
                 return <path key={feature.properties.name + "boundary"} className={"boundary"}
                     d={path(feature)}/>
                 
@@ -127,23 +127,58 @@
                     {"Num. of riders over the year"}
             </text>
             <g transform={`translate(${offsetX}, ${offsetY+height/2})`}>
-                
                 <text style={{ textAnchor:'end', fontSize:'15px'}} transform={`translate(${width}, ${height/2-20})rotate(0)`}>
                     {"End"}
             </text>
             </g>
             </g>
     }
+    function XAxes(props){
+        const {xScale, width, height, data} = props;
+               // console.log(props, 75)
+        return <g>
+            <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
+            </g>
+    }
+
+                
+    function YAxes(props) {
+        const {yScale, height} = props;
+        const ticks = yScale.ticks(5);
+                //console.log(props, 49)
+        return <g>
+            <line y2 = {height} stroke = {`black`} />
+            {ticks.map( tickValue => {
+                return <g key = {tickValue} transform = {`translate(-10, ${yScale(tickValue)})`}>
+                        <line x2 = {10} stroke = {"black"} />
+                        <text style = {{textAnchor: 'end', fontSize: '12px'}}>
+                        {tickValue}
+                        </text>
+                        </g> 
+            })}
+
+                    
+
+        </g>
+    }
     function SymmetricBarChart(props) {
         const { x, y, data, height, width, selectedStation, setSelectedStation } = props;
-        
+        const xScale = d3.scaleBand().range([0, width])
+            .domain(data.map((d=>d.station)));
+        const yScaleUp = d3.scaleLinear().range([height/2, 0])
+            .domain([0, d3.max(data, d=> d.start)]).nice();
+        const yScaleDown = d3.scaleLinear().range([0, height/2])
+            .domain([0, d3.max(data, d=> d.end)]).nice();
         return <g transform={`translate(${x}, ${y})`} >
-            
+            <XAxes data= {data} xScale = {xScale} width = {width} height = {height-145}/>
+            <YAxes yScale = {yScaleUp} width = {width} height = {height/2}/>
+
             <text style={{ textAnchor:'start', fontSize:'15px'}} transform={`translate(${width/3}, 0)`}>
                     {"Num. of riders start from a station"}
                 </text>
+
             <g transform={`translate(${0}, ${height/2})`}>
-                
+                <YAxes yScale = {yScaleDown} width = {width} height = {height/2}/>
                 <text style={{ textAnchor:'start', fontSize:'15px'}} transform={`translate(${width/3}, ${height/2+10})`}>
                 {"Num. of riders end into a station"}
                 </text>
