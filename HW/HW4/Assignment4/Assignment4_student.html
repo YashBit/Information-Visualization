@@ -105,6 +105,7 @@
     
     function Tooltip(props) {
         const {d, stationYearData, left, top, height, width} = props;
+
         if (!d) {
             return <g></g>;
         } else {
@@ -115,21 +116,71 @@
                 </g>
         };  
     }
+    function YAxes4(props) {
+        const {yScaleDown, height} = props;
+        const ticks = yScaleDown.ticks(2).reverse();
+                //console.log(props, 49)
+        // console.log(ticks, 256);
+        //console.log(ticks, 258);
+        
+        return <g>
+            <line y2 = {height+80} stroke = {`black`} />
+            {ticks.map(tickValue => {
+                return <g key = {tickValue} transform = {`translate(-10, ${-yScaleDown(tickValue)+218})`}>
+                        <line x2 = {10} stroke = {"black"} />
+                        <text style = {{textAnchor: 'end', fontSize: '12px'}}>
+                        {tickValue}
+                        </text>
+                        </g> 
+            })}
+
+                    
+
+        </g>
+    }
     function SymmetricAreaChart(props) {
         const { offsetX, offsetY, data, height, width } = props;
         //the text needed is given in the following
+        const xScale = d3.scaleBand().range([0, width])
+            .domain(data.map((d=>d.month)));
+        const yScaleUp = d3.scaleLinear().range([height, 0])
+            .domain([0, d3.max(data, d=> d.start)]).nice();
+        const yScaleDown = d3.scaleLinear().range([height, 0])
+            .domain([0, d3.max(data, d=> d.end)]).nice();
+        
+        const p1 = d3.area()
+            .x(d=> xScale(d.month))
+            .y0(height)
+            .y1(d=> yScaleUp(d.start))
+            .curve(d3.curveBasis)
+            (data);
+        
+        const p2 = d3.area()
+            .x(d=> xScale(d.month))
+            .y0(height)
+            .y1(d=> yScaleDown(d.end))
+            .curve(d3.curveBasis)
+            (data);
+
+        
+        
         return <g transform={`translate(${offsetX}, ${offsetY})`} >
-            
-            <text style={{ textAnchor:'end', fontSize:'15px'}} transform={`translate(${width}, ${20})rotate(0)`}>
+            <XAxes2 data= {data} xScale = {xScale} width = {width} height = {height}/>
+            <YAxes3 yScaleUp = {yScaleUp} width = {width} height = {height}/>
+            <path d={p1} fill={"lightgreen"} stroke={"black"} />
+            <text style={{ textAnchor:'end', fontSize:'15px'}} transform={`translate(${width}, ${20+70})rotate(0)`}>
                     {"Start"}
             </text>
             <text style={{ textAnchor:'end', fontSize:'15px'}} transform={`translate(${width*2/3}, ${-10})rotate(0)`}>
                     {"Num. of riders over the year"}
             </text>
             <g transform={`translate(${offsetX}, ${offsetY+height/2})`}>
-                <text style={{ textAnchor:'end', fontSize:'15px'}} transform={`translate(${width}, ${height/2-20})rotate(0)`}>
+                <YAxes4 yScaleDown = {yScaleDown} width = {width} height = {height}/>
+                <path d={p2} fill={"pink"} stroke={"black"} />
+
+                <text style={{ textAnchor:'end', fontSize:'15px'}} transform={`translate(${width}, ${height/2+70})rotate(0)`}>
                     {"End"}
-            </text>
+                </text>
             </g>
             </g>
     }
@@ -140,16 +191,165 @@
             <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
             </g>
     }
+    function XAxes2(props){
+        const {xScale, width, height, data} = props;
+               // console.log(props, 75)
+        const ticks = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return <g>
+           
+            <line x1 = {0} y1={height} x2={width} y2 ={height} stroke = {`black`} />
+                {ticks.map( tickValue => {
+                    return <g key = {tickValue} transform = {`translate(${xScale(tickValue)}, ${height+160})`}>
+                        <line y2 = {5} stroke = {"black"} />
+                            <text style = {{textAnchor: 'middle', fontSize: '12px'}} y ={20}>
+                            {tickValue}
+                            </text>
+                        </g> })}
+            </g>
 
-                
+
+    }
+    function Bars2(props) {
+        const {selectedStation, setSelectedStation, data, xScale, yScaleDown, height} = props;
+                //console.log(data, 153);
+        const mouseOver = d => {
+            setSelectedStation(d.station);
+        };
+        const mouseOut = () => {
+            setSelectedStation(null);
+        };
+        
+        const color = d => d.station === selectedStation? "steelblue":"#fc8d59";
+
+        // else{
+        //     const color = d => d.station === selectedStation? "steelblue":"#fc8d59";
+
+        // }
+        
+        if (selectedStation === null){
+            return <g> 
+                        
+            {data.map(d => {
+                            //console.log(xScale(d.tripdurationS, 95));
+                return <rect key = {d.station} x={xScale(d.station)} 
+                y = {0} fill = {"#fc8d59"} stroke = {`black`}   height = {height/2 - yScaleDown(d.end)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
+            })}
+                    
+                </g>
+            }else{
+                return <g> 
+                    {data.map(d => {
+                        //console.log(xScale(d.tripdurationS, 95));
+                        return <rect key = {d.station} x={xScale(d.station)} 
+                        y = {0} fill = {color(d)} stroke = {`black`}  height = {height/2 - yScaleDown(d.end)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
+                        
+
+
+                    })}
+                    {data.filter(d=> d.station ===selectedStation).map( d=> {
+                        return <rect key = {d.station} x={xScale(d.station)} 
+                        y = {0} fill = {color(d)} stroke = {`black`}  height = {height/2 - yScaleDown(d.end)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
+                    })}
+                    
+
+            </g>}}
+              
+    function Bars1(props) {
+        const {selectedStation, setSelectedStation, data, xScale, yScaleUp, height} = props;
+                //console.log(data, 153);
+        const mouseOver = d => {
+            setSelectedStation(d.station);
+        };
+        const mouseOut = () => {
+            setSelectedStation(null);
+        };
+        
+        const color = d => d.station === selectedStation? "red":"#99d594";
+
+        // else{
+        //     const color = d => d.station === selectedStation? "steelblue":"#fc8d59";
+
+        // }
+        
+        if (selectedStation === null){
+            return <g> 
+                        
+            {data.map(d => {
+                            //console.log(xScale(d.tripdurationS, 95));
+                return <rect key = {d.station} x={xScale(d.station)} 
+                y = {yScaleUp(d.start)} fill = {"#99d594"} stroke = {`black`}  height = {height/2 - yScaleUp(d.start)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
+            })}
+                    
+                </g>
+            }else{
+                return <g> 
+                    {data.map(d => {
+                        //console.log(xScale(d.tripdurationS, 95));
+                        return <rect key = {d.station} x={xScale(d.station)} 
+                        y = {yScaleUp(d.start)} fill = {color(d)} stroke = {`black`}  height = {height/2 - yScaleUp(d.start)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
+                        
+
+
+                    })}
+                    {data.filter(d=> d.station ===selectedStation).map( d=> {
+                        return <rect key = {d.station} x={xScale(d.station)} 
+                        y = {yScaleUp(d.start)} fill = {color(d)} stroke = {`black`}  height = {height/2 - yScaleUp(d.start)} width = {xScale.bandwidth()} onMouseOver={() => mouseOver(d)} onMouseOut={mouseOut}/>
+                    })}
+                    
+
+            </g>}}            
     function YAxes(props) {
-        const {yScale, height} = props;
-        const ticks = yScale.ticks(5);
+        const {yScaleUp, height} = props;
+        const ticks = yScaleUp.ticks(5);
                 //console.log(props, 49)
+        //console.log(ticks, 236);
         return <g>
             <line y2 = {height} stroke = {`black`} />
             {ticks.map( tickValue => {
-                return <g key = {tickValue} transform = {`translate(-10, ${yScale(tickValue)})`}>
+                return <g key = {tickValue} transform = {`translate(-10, ${yScaleUp(tickValue)})`}>
+                        <line x2 = {10} stroke = {"black"} />
+                        <text style = {{textAnchor: 'end', fontSize: '12px'}}>
+                        {tickValue}
+                        </text>
+                        </g> 
+            })}
+
+                    
+
+        </g>
+    }
+    function YAxes3(props) {
+        const {yScaleUp, height} = props;
+        const ticks = yScaleUp.ticks(2);
+                //console.log(props, 49)
+        //console.log(ticks, 236);
+        return <g>
+            <line y2 = {height} stroke = {`black`} />
+            {ticks.map( tickValue => {
+                return <g key = {tickValue} transform = {`translate(-10, ${yScaleUp(tickValue)})`}>
+                        <line x2 = {10} stroke = {"black"} />
+                        <text style = {{textAnchor: 'end', fontSize: '12px'}}>
+                        {tickValue}
+                        </text>
+                        </g> 
+            })}
+
+                    
+
+        </g>
+    }
+
+    function YAxes2(props) {
+        const {yScaleDown, height} = props;
+        const ticks = yScaleDown.ticks(5).reverse();
+                //console.log(props, 49)
+        // console.log(ticks, 256);
+        //console.log(ticks, 258);
+        
+        return <g>
+            <line y2 = {height} stroke = {`black`} />
+            {ticks.map(tickValue => {
+                return <g key = {tickValue} transform = {`translate(-10, ${-yScaleDown(tickValue)+145})`}>
                         <line x2 = {10} stroke = {"black"} />
                         <text style = {{textAnchor: 'end', fontSize: '12px'}}>
                         {tickValue}
@@ -167,18 +367,20 @@
             .domain(data.map((d=>d.station)));
         const yScaleUp = d3.scaleLinear().range([height/2, 0])
             .domain([0, d3.max(data, d=> d.start)]).nice();
-        const yScaleDown = d3.scaleLinear().range([0, height/2])
+        const yScaleDown = d3.scaleLinear().range([height/2, 0])
             .domain([0, d3.max(data, d=> d.end)]).nice();
         return <g transform={`translate(${x}, ${y})`} >
             <XAxes data= {data} xScale = {xScale} width = {width} height = {height-145}/>
-            <YAxes yScale = {yScaleUp} width = {width} height = {height/2}/>
-
+            <YAxes yScaleUp = {yScaleUp} width = {width} height = {height/2}/>
+            <Bars1 selectedStation ={selectedStation} setSelectedStation ={setSelectedStation} height = {height} data = {data} xScale = {xScale} yScaleUp = {yScaleUp}/>
             <text style={{ textAnchor:'start', fontSize:'15px'}} transform={`translate(${width/3}, 0)`}>
                     {"Num. of riders start from a station"}
                 </text>
 
             <g transform={`translate(${0}, ${height/2})`}>
-                <YAxes yScale = {yScaleDown} width = {width} height = {height/2}/>
+                <YAxes2 yScaleDown = {yScaleDown} width = {width} height = {height/2}/>
+                <Bars2  selectedStation ={selectedStation} setSelectedStation ={setSelectedStation} height = {height} data = {data} xScale = {xScale} yScaleDown = {yScaleDown}/>
+
                 <text style={{ textAnchor:'start', fontSize:'15px'}} transform={`translate(${width/3}, ${height/2+10})`}>
                 {"Num. of riders end into a station"}
                 </text>
