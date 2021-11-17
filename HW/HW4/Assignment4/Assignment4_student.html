@@ -118,7 +118,7 @@
     }
     function YAxes4(props) {
         const {yScaleDown, height} = props;
-        const ticks = yScaleDown.ticks(2).reverse();
+        const ticks = yScaleDown.ticks(2);
                 //console.log(props, 49)
         // console.log(ticks, 256);
         //console.log(ticks, 258);
@@ -126,7 +126,7 @@
         return <g>
             <line y2 = {height+80} stroke = {`black`} />
             {ticks.map(tickValue => {
-                return <g key = {tickValue} transform = {`translate(-10, ${-yScaleDown(tickValue)+218})`}>
+                return <g key = {tickValue} transform = {`translate(-10, ${yScaleDown(tickValue)+12})`}>
                         <line x2 = {10} stroke = {"black"} />
                         <text style = {{textAnchor: 'end', fontSize: '12px'}}>
                         {tickValue}
@@ -146,7 +146,7 @@
         const yScaleUp = d3.scaleLinear().range([height, 0])
             .domain([0, d3.max(data, d=> d.start)]).nice();
         const yScaleDown = d3.scaleLinear().range([height, 0])
-            .domain([0, d3.max(data, d=> d.end)]).nice();
+            .domain([d3.max(data, d=> d.end), 0]).nice();
         
         const p1 = d3.area()
             .x(d=> xScale(d.month))
@@ -157,7 +157,7 @@
         
         const p2 = d3.area()
             .x(d=> xScale(d.month))
-            .y0(height)
+            .y0(10)
             .y1(d=> yScaleDown(d.end))
             .curve(d3.curveBasis)
             (data);
@@ -174,7 +174,7 @@
             <text style={{ textAnchor:'end', fontSize:'15px'}} transform={`translate(${width*2/3}, ${-10})rotate(0)`}>
                     {"Num. of riders over the year"}
             </text>
-            <g transform={`translate(${offsetX}, ${offsetY+height/2})`}>
+            <g transform={`translate(${offsetX}, ${offsetY+60+height/2})`}>
                 <YAxes4 yScaleDown = {yScaleDown} width = {width} height = {height}/>
                 <path d={p2} fill={"pink"} stroke={"black"} />
 
